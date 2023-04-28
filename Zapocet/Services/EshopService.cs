@@ -41,8 +41,14 @@ namespace Zapocet.Services
                 if(_context.PurchaseOrderHeaders.Any(x => x.PoNumber == dataRow.poid)) 
                 {
                     responseDto.Failed++;
-                    responseDto.Message = "Duplicated POIDs!";
+                    responseDto.FailedList.Add(dataRow.poid);
+                    responseDto.Message = "We have some duplicates here!";
                     continue;
+                }
+
+                if (dataRow.email.Length > 30)
+                {
+                    dataRow.email = " Invalid, too much dlouhý";
                 }
 
                 var purchaseOrderHeaders = new PurchaseOrderHeaders()
@@ -50,8 +56,8 @@ namespace Zapocet.Services
                     PoNumber = dataRow.poid,
                     CustomerName = dataRow.first_name,
                     CustomerLastName = dataRow.last_name,
-                    CreatedOn = DateTime.ParseExact(dataRow.createdon, "M/dd/yyyy", CultureInfo.InvariantCulture),
-                    CustomerEmail = dataRow.email                    
+                    CreatedOn = DateTime.ParseExact(dataRow.createdon, "M/d/yyyy", CultureInfo.InvariantCulture),
+                    CustomerEmail = dataRow.email               
                 };
 
                 _context.PurchaseOrderHeaders.Add(purchaseOrderHeaders);
